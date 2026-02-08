@@ -14,10 +14,12 @@ class Settings(BaseSettings):
 
     # Deployment / CORS
     ENVIRONMENT: str = "development"
-    cors_origins: List[str] = [
-        "http://localhost:3000",
-        "https://hackathon2-phase-iii-todo-agent.vercel.app",
-    ]
+    CORS_ORIGINS: str = "http://localhost:3000,https://hackathon2-phase-iii-todo-agent.vercel.app"
+
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Split comma-separated CORS_ORIGINS string into a list."""
+        return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
 
     # MCP Remote Server Configuration (Production)
     MCP_SERVER_URL: str  # Remote MCP server endpoint (no default — must be set)

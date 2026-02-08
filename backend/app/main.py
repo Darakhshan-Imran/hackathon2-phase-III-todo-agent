@@ -64,7 +64,7 @@ _docs_url = "/docs" if app_settings.ENVIRONMENT == "development" else None
 _redoc_url = "/redoc" if app_settings.ENVIRONMENT == "development" else None
 
 # CORS origins — directly from config
-_allowed_origins = app_settings.cors_origins
+_allowed_origins = app_settings.cors_origins_list
 
 app = FastAPI(
     title="AI TODO Agent API",
