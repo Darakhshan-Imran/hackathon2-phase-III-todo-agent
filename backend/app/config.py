@@ -10,18 +10,14 @@ class Settings(BaseSettings):
     api_key: str  # Groq API key
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60  # 1 hour - reduced from 15 hours for security
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
     # Deployment / CORS
-    ENVIRONMENT: str = "production"  # "development" or "production"
-    CORS_ORIGIN: str = ""  # Comma-separated origins, e.g. "https://myapp.vercel.app,https://other.app"
-
-    @property
-    def cors_origins(self) -> List[str]:
-        """Parse CORS_ORIGIN string into a list."""
-        if not self.CORS_ORIGIN:
-            return []
-        return [o.strip() for o in self.CORS_ORIGIN.split(",") if o.strip()]
+    ENVIRONMENT: str = "development"
+    cors_origins: List[str] = [
+        "http://localhost:3000",
+        "https://hackathon2-phase-iii-todo-agent.vercel.app",
+    ]
 
     # MCP Remote Server Configuration (Production)
     MCP_SERVER_URL: str  # Remote MCP server endpoint (no default — must be set)

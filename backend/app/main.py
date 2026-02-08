@@ -63,13 +63,8 @@ async def lifespan(app: FastAPI):
 _docs_url = "/docs" if app_settings.ENVIRONMENT == "development" else None
 _redoc_url = "/redoc" if app_settings.ENVIRONMENT == "development" else None
 
-# CORS origins — driven by env var, localhost in development
-_default_origins = (
-    ["http://localhost:3000", "http://127.0.0.1:3000"]
-    if app_settings.ENVIRONMENT == "development"
-    else []
-)
-_allowed_origins = app_settings.cors_origins or _default_origins
+# CORS origins — directly from config
+_allowed_origins = app_settings.cors_origins
 
 app = FastAPI(
     title="AI TODO Agent API",
