@@ -1,0 +1,22 @@
+[project]
+name = "groq-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "asyncpg>=0.31.0",
+    "fastapi>=0.128.0",
+    "httpx>=0.27.0",
+    "mcp>=1.0.0",
+    "openai-agents>=0.7.0",
+    "passlib[bcrypt]>=1.7.4",
+    "pydantic-settings>=2.12.0",
+    "pydantic[email]>=2.12.5",
+    "python-dotenv>=1.2.1",
+    "python-jose[cryptography]>=3.5.0",
+    "python-multipart>=0.0.22",
+    "slowapi>=0.1.9",
+    "sqlmodel>=0.0.32",
+    "uvicorn[standard]>=0.40.0",
+]
