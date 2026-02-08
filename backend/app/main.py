@@ -96,7 +96,7 @@ _default_origins = (
     if app_settings.ENVIRONMENT == "development"
     else []
 )
-_allowed_origins = app_settings.ALLOWED_ORIGINS or _default_origins
+_allowed_origins = app_settings.cors_origins or _default_origins
 
 app.add_middleware(
     CORSMiddleware,

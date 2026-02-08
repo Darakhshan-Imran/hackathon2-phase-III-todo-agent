@@ -14,7 +14,14 @@ class Settings(BaseSettings):
 
     # Deployment / CORS
     ENVIRONMENT: str = "production"  # "development" or "production"
-    ALLOWED_ORIGINS: List[str] = []  # e.g. ["https://myapp.vercel.app"]
+    CORS_ORIGIN: str = ""  # Comma-separated origins, e.g. "https://myapp.vercel.app,https://other.app"
+
+    @property
+    def cors_origins(self) -> List[str]:
+        """Parse CORS_ORIGIN string into a list."""
+        if not self.CORS_ORIGIN:
+            return []
+        return [o.strip() for o in self.CORS_ORIGIN.split(",") if o.strip()]
 
     # MCP Remote Server Configuration (Production)
     MCP_SERVER_URL: str  # Remote MCP server endpoint (no default — must be set)
