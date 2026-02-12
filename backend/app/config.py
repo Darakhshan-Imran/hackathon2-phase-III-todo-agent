@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from pydantic_settings import BaseSettings
 
@@ -20,13 +20,6 @@ class Settings(BaseSettings):
     def cors_origins_list(self) -> List[str]:
         """Split comma-separated CORS_ORIGINS string into a list."""
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
-
-    # MCP Remote Server Configuration (Production)
-    MCP_SERVER_URL: str  # Remote MCP server endpoint (no default — must be set)
-    MCP_API_KEY: Optional[str] = None  # API key for authenticating with the MCP server
-    MCP_SERVER_TIMEOUT: int = 30  # Timeout in seconds for MCP server requests
-    MCP_CACHE_TOOLS: bool = True  # Cache the tools list from MCP server
-    MCP_MAX_RETRIES: int = 3  # Max retry attempts for MCP server connections
 
     class Config:
         env_file = ".env"

@@ -9,7 +9,6 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
 from app.database import init_db
-from app.agent.mcp_client import cleanup_mcp_server
 from app.config import settings as app_settings
 from app.routers.auth_router import router as auth_router
 from app.routers.agent_router import router as agent_router
@@ -56,7 +55,6 @@ async def lifespan(app: FastAPI):
     logger.info(f"CORS origins configured: {_allowed_origins}")
     await init_db()
     yield
-    await cleanup_mcp_server()
 
 
 # Hide API docs in production to prevent information disclosure

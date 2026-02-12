@@ -20,7 +20,7 @@ export function useAuth(): UseAuthReturn {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const authenticated = isAuthenticated();
+  const [authenticated, setAuthenticated] = useState(() => isAuthenticated());
 
   // Load user on mount if authenticated
   useEffect(() => {
@@ -53,7 +53,8 @@ export function useAuth(): UseAuthReturn {
     try {
       const tokens = await authApi.login(credentials);
       saveTokens(tokens);
-      
+      setAuthenticated(true);
+
       const currentUser = await authApi.getCurrentUser();
       setUser(currentUser);
     } catch (err) {
@@ -72,14 +73,15 @@ export function useAuth(): UseAuthReturn {
     try {
       // Register returns a message, not tokens
       await authApi.register(data);
-      
+
       // Auto-login after successful registration
       const tokens = await authApi.login({
         username: data.username,
         password: data.password,
       });
       saveTokens(tokens);
-      
+      setAuthenticated(true);
+
       const currentUser = await authApi.getCurrentUser();
       setUser(currentUser);
     } catch (err) {
@@ -97,6 +99,7 @@ export function useAuth(): UseAuthReturn {
     try {
       await authApi.logout();
       clearTokens();
+      setAuthenticated(false);
       setUser(null);
     } catch (err) {
       console.error("Logout error:", err);

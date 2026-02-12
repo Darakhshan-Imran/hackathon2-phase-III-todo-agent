@@ -1,15 +1,21 @@
 from openai import AsyncOpenAI
 from agents import Agent, OpenAIChatCompletionsModel
 
-from agents.mcp import MCPServerStreamableHttp
+from agents.mcp import MCPServerStdio
 
 
-AGENT_INSTRUCTIONS = """⚠️⚠️⚠️ MANDATORY TOOL USAGE PROTOCOL ⚠️⚠️⚠️
+AGENT_INSTRUCTIONS = """⚠️⚠️⚠️ CRITICAL: USER_ID RULE ⚠️⚠️⚠️
+
+Every tool call requires a user_id parameter. You MUST use the exact user_id provided
+in the [SYSTEM: ...] block at the start of the conversation. NEVER guess, hardcode, or
+use a different user_id. This is a security requirement for data isolation.
+
+⚠️⚠️⚠️ MANDATORY TOOL USAGE PROTOCOL ⚠️⚠️⚠️
 
 YOU MUST CALL TOOLS FOR EVERY TASK-RELATED QUERY. NO EXCEPTIONS.
 
 BEFORE you type ANY response about tasks, you MUST:
-1. Call search_tasks_by_keyword() OR list_tasks() 
+1. Call search_tasks_by_keyword() OR list_tasks()
 2. Wait for actual database results
 3. Only then respond with the data you received
 
@@ -70,6 +76,21 @@ PARALLEL TOOL CALLS (when possible):
 - Example: If user says "show all tasks and count completed ones" → Call list_tasks() and execute_sql_query in parallel
 - For sequential operations (like creating multiple tasks), call them one by one
 - Search operations can be done in parallel if searching for different things
+
+Task Title vs Description (IMPORTANT - ALWAYS FOLLOW):
+- "title": Extract a SHORT concise label (3-8 words max) that summarizes the task.
+- "description": ALWAYS set this to the user's full original task message as-is.
+- NEVER leave description empty. NEVER put the full sentence in the title.
+
+Examples:
+  * User: "I need to buy groceries from the store tomorrow"
+    → title="Buy groceries", description="I need to buy groceries from the store tomorrow"
+  * User: "Create a task to review the pull request for authentication"
+    → title="Review auth PR", description="Review the pull request for authentication"
+  * User: "add task finish homework for math class by friday"
+    → title="Finish homework", description="Finish homework for math class by friday"
+  * User: "buy milk"
+    → title="Buy milk", description="Buy milk"
 
 You can:
 - Create new tasks with titles, descriptions, and due dates
@@ -211,15 +232,15 @@ Before sending ANY response about tasks:
 This is NON-NEGOTIABLE. Tool calls are MANDATORY for all task-related queries."""
 
 
-def create_todo_agent(groq_client: AsyncOpenAI, mcp_server: MCPServerStreamableHttp) -> Agent:
-    """Create a todo management agent configured with Groq and remote MCP tools.
+def create_todo_agent(groq_client: AsyncOpenAI, mcp_server: MCPServerStdio) -> Agent:
+    """Create a todo management agent configured with Groq and local MCP tools.
 
     Args:
         groq_client: The Groq-compatible OpenAI client.
-        mcp_server: The remote MCP server providing task management tools.
+        mcp_server: The local MCP server providing task management tools.
 
     Returns:
-        An Agent configured to use tools from the remote MCP server.
+        An Agent configured to use tools from the local MCP server.
     """
     return Agent(
         name="Todo Manager & Data Analyst",

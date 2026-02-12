@@ -66,11 +66,13 @@ async def chat(
     for msg in history:
         conversation_history.append(f"{msg.role}: {msg.content}")
     
-    # Add current user message to context
-    full_prompt = sanitized_message
+    # Add current user message to context with user_id for MCP tools
+    user_context = f"[SYSTEM: The authenticated user_id is {current_user.id}. You MUST pass user_id={current_user.id} to every tool call. Never use a different user_id.]\n\n"
+
+    full_prompt = user_context + sanitized_message
     if conversation_history:
         context_str = "\\n".join(conversation_history)
-        full_prompt = f"Previous conversation:\\n{context_str}\\n\\nUser: {sanitized_message}"
+        full_prompt = f"{user_context}Previous conversation:\\n{context_str}\\n\\nUser: {sanitized_message}"
     
     # Get the remote MCP server instance
     mcp_server = get_mcp_server()
