@@ -117,15 +117,17 @@ interface IntegratedChatProps {
   isProcessing: boolean;
   onRetryMessage?: (messageId: string) => void;
   onEditMessage?: (messageId: string, newContent: string) => void;
+  username?: string;
 }
 
-export function IntegratedChat({ 
-  messages, 
-  agentState, 
+export function IntegratedChat({
+  messages,
+  agentState,
   onSendMessage,
   isProcessing,
   onRetryMessage,
-  onEditMessage
+  onEditMessage,
+  username,
 }: IntegratedChatProps) {
     const [value, setValue] = useState("");
     const [attachments, setAttachments] = useState<string[]>([]);
@@ -188,7 +190,7 @@ export function IntegratedChat({
                                 className="inline-block"
                             >
                                 <h1 className="text-3xl font-medium tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white/90 to-white/40 pb-1">
-                                    How can I help today?
+                                    {username ? `Hi ${username}, how can I help?` : "How can I help today?"}
                                 </h1>
                                 <motion.div 
                                     className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"

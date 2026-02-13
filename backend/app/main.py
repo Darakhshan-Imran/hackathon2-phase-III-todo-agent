@@ -9,11 +9,12 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
 from app.database import init_db
-from app.agent.mcp_client import cleanup_mcp_server
 from app.config import settings as app_settings
+from app.scheduler import start_scheduler, stop_scheduler
 from app.routers.auth_router import router as auth_router
 from app.routers.agent_router import router as agent_router
 from app.routers.sql_router import router as sql_router
+from app.routers.notification_router import router as notification_router
 
 logger = logging.getLogger(__name__)
 
@@ -52,11 +53,12 @@ def sanitize_input(text: str, max_length: int = 10000) -> str:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialize database on startup, cleanup MCP on shutdown."""
+    """Initialize database and scheduler on startup, clean up on shutdown."""
     logger.info(f"CORS origins configured: {_allowed_origins}")
     await init_db()
+    start_scheduler()
     yield
-    await cleanup_mcp_server()
+    stop_scheduler()
 
 
 # Hide API docs in production to prevent information disclosure
@@ -85,7 +87,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=_allowed_origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+    allow_methods=["GET", "POST", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
 
@@ -105,6 +107,7 @@ async def add_security_headers(request: Request, call_next):
 app.include_router(auth_router)
 app.include_router(agent_router)
 app.include_router(sql_router)
+app.include_router(notification_router)
 
 
 @app.get("/", tags=["Health"])

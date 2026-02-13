@@ -115,3 +115,25 @@ class TodoResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# Notification Schemas
+class NotificationResponse(BaseModel):
+    """Schema for a notification."""
+
+    id: int
+    user_id: int
+    task_id: int
+    message: str
+    is_read: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class NotificationListResponse(BaseModel):
+    """Schema for list of notifications with unread count."""
+
+    notifications: List[NotificationResponse]
+    unread_count: int

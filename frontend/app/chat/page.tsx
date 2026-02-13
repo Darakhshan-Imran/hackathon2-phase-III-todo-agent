@@ -6,11 +6,12 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useAgentChat } from "@/lib/hooks/useAgentChat";
 import { IntegratedChat } from "@/components/ui/integrated-chat";
 import { ErrorAlert } from "@/components/ui/error-alert";
+import { NotificationBell } from "@/components/ui/notification-bell";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 
 export default function ChatPage() {
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, user } = useAuth();
   const { 
     messages, 
     agentState, 
@@ -53,10 +54,15 @@ export default function ChatPage() {
 
   return (
     <>
+      {/* Notification Bell — top right */}
+      <div className="fixed top-4 right-4 z-50">
+        <NotificationBell />
+      </div>
+
       {/* Error Alert */}
       {error && (
-        <ErrorAlert 
-          message={error} 
+        <ErrorAlert
+          message={error}
           onDismiss={clearError}
         />
       )}
@@ -69,6 +75,7 @@ export default function ChatPage() {
         isProcessing={isProcessing}
         onRetryMessage={retryMessage}
         onEditMessage={editMessage}
+        username={user?.username}
       />
     </>
   );

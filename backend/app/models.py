@@ -28,7 +28,21 @@ class Todo(SQLModel, table=True):
     user_id: int = Field(foreign_key="users.id", index=True)
     created_by: Optional[str] = Field(default=None, max_length=100)  # "task created by 'username'"
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    notified: bool = Field(default=False)  # True once a 12h reminder has been created
     updated_at: Optional[datetime] = Field(default=None)
+
+
+class Notification(SQLModel, table=True):
+    """In-app reminder notifications for upcoming due dates."""
+
+    __tablename__ = "notifications"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="users.id", index=True)
+    task_id: int = Field(foreign_key="todos.id", index=True)
+    message: str = Field(max_length=500)
+    is_read: bool = Field(default=False)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 class ConversationMessage(SQLModel, table=True):
